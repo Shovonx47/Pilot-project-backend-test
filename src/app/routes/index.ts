@@ -1,6 +1,7 @@
 import { Router } from 'express';
 import { AccountOfficerRoutes } from '../modules/Account_officer/account_officer.route';
 import { AdminRoutes } from '../modules/Admin/admin.route';
+import { AttendanceRoutes } from '../modules/Attendance/attendance.route';
 import { AuthRoutes } from '../modules/Auth/auth.route';
 import { ClassRoutineRoutes } from '../modules/Create-class-routine/class-routine.route';
 import { ExamSettingRoutes } from '../modules/Exam-setting/exam-setting.route';
@@ -11,8 +12,7 @@ import { StaffRoutes } from '../modules/Staff/staff.route';
 import { StudentRoutes } from '../modules/Student/student.route';
 import { TeacherRoutes } from '../modules/Teacher/teacher.route';
 import { TransactionRoutes } from '../modules/Transaction/transaction.route';
-import { AttendanceRoutes } from '../modules/Attendance/attendance.route';
-
+import { TransactionTypeRoutes } from '../modules/TransactionType/transactionType.route';
 
 const router = Router();
 
@@ -58,7 +58,6 @@ const moduleRoutes = [
     route: ExamSettingRoutes,
   },
   {
-
     path: '/attendance',
     route: AttendanceRoutes,
   },
@@ -69,12 +68,14 @@ const moduleRoutes = [
   {
     path: '/transaction',
     route: TransactionRoutes,
-
   },
   {
     path: '/attendance',
     route: AttendanceRoutes,
-
+  },
+  {
+    path: '/transaction-type',
+    route: TransactionTypeRoutes,
   },
 ];
 
