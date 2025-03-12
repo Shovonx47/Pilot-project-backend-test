@@ -4,8 +4,9 @@ export interface TAttendance {
   user: {
     id: Types.ObjectId;
     role: 'student' | 'teacher' | 'staff' | 'accountant';
+    providedId: string
   };
-  designation: string;
+  designation?: string;
   full_name: string;
   date: string;
 

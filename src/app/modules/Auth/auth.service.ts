@@ -2,10 +2,12 @@ import { StatusCodes } from 'http-status-codes';
 import AppError from '../../errors/AppError';
 import config from '../../config';
 import { TUser } from './auth.interface';
-import { createToken, generateUserId } from './auth.utils';
+import { createToken, generateUserId, sendEmailForUpdatePassword } from './auth.utils';
 import { Auth } from './auth.model';
 import jwt, { JwtPayload } from 'jsonwebtoken';
 import { Response } from "express";
+import bcrypt from 'bcrypt';
+import mongoose from 'mongoose';
 
 const registerUserIntoDB = async (payload: TUser) => {
   const isEmailValid = (email: string): boolean => {
@@ -173,9 +175,141 @@ const logout = async (res: Response) => {
   return { message: "Logged out successfully" };
 }
 
+
+const sendForgotPasswordCode = async (email: string) => {
+  const session = await mongoose.startSession();
+  session.startTransaction();
+
+  try {
+    const isEmailValid = (email: string): boolean => {
+      const authRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+      return authRegex.test(email);
+    };
+
+    const isAuthEmail = isEmailValid(email);
+    if (!isAuthEmail) {
+      throw new Error('Authentication failed. Please enter a valid email address.');
+    }
+
+    const existingUser = await Auth.findOne({ email }).session(session);
+    if (!existingUser) {
+      throw new AppError(StatusCodes.NOT_FOUND, 'User not found');
+    }
+
+    const otp = await sendEmailForUpdatePassword(email, existingUser.name);
+
+    // Set OTP and expiration time (5 minutes from now)
+    existingUser.otp = otp;
+    existingUser.otpExpireDate = new Date(Date.now() + 5 * 60 * 1000); // 5 minutes from now
+
+    await existingUser.save({ session });
+
+    await session.commitTransaction(); // Commit the transaction if everything is successful
+    session.endSession();
+
+    return existingUser;
+  } catch (error) {
+    await session.abortTransaction(); // Abort the transaction if any error occurs
+    session.endSession();
+    throw error; // Rethrow the error for further handling
+  }
+};
+
+
+const verifyForgotUserAuth = async (payload: { email: string; otp: string }) => {
+  const isEmailValid = (email: string): boolean => {
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    return emailRegex.test(email);
+  };
+
+  const date = new Date();
+  const { email, otp } = payload;
+
+  if (!email || !otp) {
+    throw new Error('Unauthorized');
+  }
+
+  const isAuthEmail = isEmailValid(email);
+
+
+  if (!isAuthEmail) {
+    throw new Error(
+      'Authentication failed. Please enter a valid email address.'
+    );
+  }
+
+  const user = await Auth.findOne({ email });
+  if (!user) {
+    throw new AppError(StatusCodes.NOT_FOUND, 'User not found.');
+  }
+
+  if (user.otp !== otp) {
+    throw new Error('Incorrect OTP.');
+  }
+  if (user.otpExpireDate < date) {
+    throw new Error('OTP has expired.');
+  }
+
+  const result = await Auth.updateOne(
+    { email },
+    {
+      $set: { otp: '', expiredOtpDate: '' },
+    },
+    { new: true, runValidators: true },
+  );
+  return result;
+};
+
+const updateForgotPasswordFromProfile = async (payload: {
+  email: string;
+  newPassword: string;
+  confirmPassword: string;
+}) => {
+  const { email, newPassword, confirmPassword } = payload;
+
+  const existingUser = await Auth.findOne({ email });
+
+  if (!existingUser) {
+    throw new Error('User not found');
+  }
+
+  if (!newPassword || !confirmPassword) {
+    throw new Error('Please enter password and confirm password');
+  }
+
+  if (newPassword !== confirmPassword) {
+    throw new Error('Passwords do not match');
+  }
+
+  const hasPassword = await bcrypt.hash(
+    newPassword,
+    Number(config.bcrypt_salt_rounds),
+  );
+
+  const result = await Auth.updateOne(
+    { _id: existingUser._id },
+    {
+      password: hasPassword,
+      passwordChangedAt: new Date(),
+      $unset: { otp: '', otpExpireDate: '' },
+    },
+    { new: true, runValidators: true },
+  );
+
+  return result
+};
+
+
+
+
+
+
 export const UserAuthServices = {
   registerUserIntoDB,
   loginUserWithDB,
   refreshToken,
-  logout
+  logout,
+  sendForgotPasswordCode,
+  verifyForgotUserAuth,
+  updateForgotPasswordFromProfile
 };

@@ -45,7 +45,7 @@ const createTeacherIntoDB = async (payload: TTeacher) => {
       throw new AppError(StatusCodes.UNAUTHORIZED, 'You are not registered.');
     }
 
-    if (!checkUserAuth.password || checkUserAuth.userId) {
+    if (!checkUserAuth.password && checkUserAuth.userId) {
       const hashedPassword = await bcrypt.hash(
         teacherId,
         Number(config.bcrypt_salt_rounds),
@@ -57,6 +57,20 @@ const createTeacherIntoDB = async (payload: TTeacher) => {
             isCompleted: true,
             role: 'teacher',
             password: hashedPassword,
+            userId: '',
+          },
+        },
+        { session, new: true }, // Use the session and return the updated document
+      );
+    }
+    if (checkUserAuth.password && checkUserAuth.userId) {
+
+      await Auth.findOneAndUpdate(
+        { userId: payload.userId }, // Query filter
+        {
+          $set: {
+            isCompleted: true,
+            role: 'teacher',
             userId: '',
           },
         },

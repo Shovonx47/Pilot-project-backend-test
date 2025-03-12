@@ -44,7 +44,7 @@ const createStaffIntoDB = async (payload: TStaff) => {
     }
 
     // If no password is set, update the user's credentials
-    if (!userAuth.password || userAuth.userId) {
+    if (!userAuth.password && userAuth.userId) {
       const hashedPassword = await bcrypt.hash(
         staffId,
         Number(config.bcrypt_salt_rounds),
@@ -56,6 +56,20 @@ const createStaffIntoDB = async (payload: TStaff) => {
             isCompleted: true,
             role: 'staff',
             password: hashedPassword,
+            userId: '',
+          },
+        },
+        { session, new: true },
+      );
+    }
+    if (userAuth.password && userAuth.userId) {
+      
+      await Auth.findOneAndUpdate(
+        { userId: payload.userId },
+        {
+          $set: {
+            isCompleted: true,
+            role: 'staff',
             userId: '',
           },
         },

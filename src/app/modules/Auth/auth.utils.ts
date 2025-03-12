@@ -1,7 +1,8 @@
 import jwt from 'jsonwebtoken';
 import { Types } from 'mongoose';
-
-
+import ejs from 'ejs';
+import path from 'path';
+import { sendEmail } from '../../utils/sendEmail';
 
 
 export const generateUserId = async () => {
@@ -22,4 +23,61 @@ export const createToken = (
   return jwt.sign(jwtPayload, secret, {
     expiresIn,
   });
+};
+
+
+
+
+export const createVerificationOTP = () => {
+  const code = Math.floor(100000 + Math.random() * 900000).toString();
+
+  return {
+    code,
+  };
+};
+
+export const sendEmailVerification = async (email: string, name: string) => {
+  const verificationOtp = createVerificationOTP();
+
+  // Prepare email data
+  const emailData = {
+    code: verificationOtp.code,
+    email,
+    name,
+  };
+
+  // Render email template
+  const html = await ejs.renderFile(
+    path.join(__dirname, '../../templates/email.verification.ejs'),
+    emailData,
+  );
+
+  await sendEmail(email, 'Verify your email address', html);
+
+  return verificationOtp.code;
+};
+
+
+export const sendEmailForUpdatePassword = async (
+  email: string,
+  name: string,
+) => {
+  const verificationOtp = createVerificationOTP();
+
+  // Prepare email data
+  const emailData = {
+    code: verificationOtp.code,
+    email,
+    name,
+  };
+
+  // Render email template
+  const html = await ejs.renderFile(
+    path.join(__dirname, '../../templates/email.forget-password.ejs'),
+    emailData,
+  );
+
+  await sendEmail(email, 'Verify your email address', html);
+
+  return verificationOtp.code;
 };

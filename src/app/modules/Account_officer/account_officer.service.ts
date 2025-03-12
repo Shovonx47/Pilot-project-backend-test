@@ -47,7 +47,7 @@ const createAccountOfficerIntoDB = async (payload: TAccountOfficer) => {
 
     // Update the Auth document
 
-    if (!checkUserAuth.password || checkUserAuth.userId) {
+    if (!checkUserAuth.password && checkUserAuth.userId) {
       const hashedPassword = await bcrypt.hash(
         accountantId,
         Number(config.bcrypt_salt_rounds),
@@ -59,6 +59,20 @@ const createAccountOfficerIntoDB = async (payload: TAccountOfficer) => {
             isCompleted: true,
             role: 'accountant',
             password: hashedPassword,
+            userId: '',
+          },
+        },
+        { session, new: true }, // Use the session and return the updated document
+      );
+    }
+    if (checkUserAuth.password && checkUserAuth.userId) {
+       
+      await Auth.findOneAndUpdate(
+        { userId: payload.userId }, // Query filter
+        {
+          $set: {
+            isCompleted: true,
+            role: 'accountant',
             userId: '',
           },
         },

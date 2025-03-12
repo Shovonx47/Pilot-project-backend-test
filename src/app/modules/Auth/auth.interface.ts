@@ -20,6 +20,10 @@ export type TUser = {
   status: 'active' | 'block';
   isDeleted: boolean;
   isCompleted: boolean;
+
+  otp: string;
+  otpExpireDate: Date;
+
 };
 export type TUserForLogin = {
   auth: string;
@@ -32,20 +36,20 @@ export type TUserExtends = Document &
   };
 
 
-  export interface UserModel extends Model<TUserExtends> {
-    isUserExistsByCustomId(email: string): Promise<TUser | null>;
-    isJWTIssuedBeforePasswordChanged(
-      passwordChangedTimestamp: Date,
-      jwtIssuedTimestamp: number,
-    ): boolean;
-  }
+export interface UserModel extends Model<TUserExtends> {
+  isUserExistsByCustomId(email: string): Promise<TUser | null>;
+  isJWTIssuedBeforePasswordChanged(
+    passwordChangedTimestamp: Date,
+    jwtIssuedTimestamp: number,
+  ): boolean;
+}
 
 
 
-// export interface UserModel extends Model<TUser> {
-//   //instance methods for checking if passwords are matched
+export type Action = 'send-verify-code'
+  | 'verify-otp'
+  | 'update-forgot-password'
 
-// }
 
 
 export type TUserRole = keyof typeof USER_ROLE;

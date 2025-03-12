@@ -3,6 +3,7 @@ import express from 'express';
 import validateRequest from '../../middlewares/validateRequest';
 import { AuthValidation } from './auth.validation';
 import { userAuthController } from './auth.controller';
+import { updateFunc } from './auth.const';
 
 const router = express.Router();
 
@@ -27,5 +28,8 @@ router
   );
   router.post("/logout", userAuthController.logout);
   
+  router
+  .route(
+    '/:action(send-verify-code|verify-otp|update-forgot-password)').put(updateFunc);
 
 export const AuthRoutes = router;

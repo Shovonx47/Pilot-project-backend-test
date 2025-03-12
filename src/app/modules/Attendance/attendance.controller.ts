@@ -14,8 +14,15 @@ const createAttendance = catchAsync(async (req, res) => {
   });
 });
 
+
 const getTodayAttendance = catchAsync(async (req, res) => {
-  const result = await AttendanceServices.getTodayAttendanceFromDB();
+  const role = req.query.role as string;
+  const page = parseInt(req.query.page as string);
+  const limit = parseInt(req.query.limit as string);
+  const searchTerm = req.query.searchTerm as string;
+  const searchDate = req.query.searchDate as string;
+
+  const result = await AttendanceServices.getTodayAttendanceFromDB(role, page, limit, searchTerm, searchDate);
   sendResponse(res, {
     statusCode: StatusCodes.OK,
     success: true,
@@ -24,14 +31,16 @@ const getTodayAttendance = catchAsync(async (req, res) => {
   });
 });
 const getAllAttendanceByCurrentMonth = catchAsync(async (req, res) => {
-  const limit = parseInt(req.query.limit as string);
+  const role = req.query.role as string;
   const page = parseInt(req.query.page as string);
-
+  const limit = parseInt(req.query.limit as string);
   const searchTerm = req.query.searchTerm as string;
+  const month = parseInt(req.query.month as string);
+  const year = parseInt(req.query.year as string);
+
+
   const result = await AttendanceServices.getAllAttendanceByCurrentMonth(
-    limit,
-    page,
-    searchTerm,
+    role, page, limit, searchTerm, month, year
   );
   sendResponse(res, {
     statusCode: StatusCodes.OK,
@@ -53,10 +62,13 @@ const getSingleDateAttendance = catchAsync(async (req, res) => {
     data: result,
   });
 });
-const getSingleAttendance = catchAsync(async (req, res) => {
-  const { id } = req.params;
 
-  const result = await AttendanceServices.getSingleAttendance(id);
+
+const getSingleAttendance = catchAsync(async (req, res) => {
+  const { role } = req.params;
+  const { providedId } = req.params;
+
+  const result = await AttendanceServices.getSingleAttendance(role, providedId);
 
   sendResponse(res, {
     statusCode: StatusCodes.OK,
@@ -66,7 +78,21 @@ const getSingleAttendance = catchAsync(async (req, res) => {
   });
 });
 
+
+const updateAttendance = catchAsync(async (req, res) => {
+  const { date: id } = req.params;
+  const result = await AttendanceServices.updateAttendanceInDB(id, req.body);
+
+  sendResponse(res, {
+    statusCode: StatusCodes.OK,
+    success: true,
+    message: 'Attendance update successful!',
+    data: result,
+  });
+});
+
 const deleteAttendance = catchAsync(async (req, res) => {
+
   const result = await AttendanceServices.deleteAttendanceFromDB(req.body);
   sendResponse(res, {
     statusCode: StatusCodes.OK,
@@ -81,6 +107,7 @@ export const attendanceController = {
   getTodayAttendance,
   getAllAttendanceByCurrentMonth,
   getSingleDateAttendance,
-  deleteAttendance,
   getSingleAttendance,
+  updateAttendance,
+  deleteAttendance,
 };

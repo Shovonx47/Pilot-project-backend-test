@@ -38,17 +38,14 @@ const createStudentIntoDB = async (payload: TStudent) => {
     if (existingStudent) {
       throw new AppError(
         StatusCodes.CONFLICT,
-        `A student with the same userId-${payload.userId}, class, and section already exists.`,
+        `A student with the same userId-${payload.userId} class, and section already exists.`,
       );
     }
-    if (!payload.userId) {
-      throw new AppError(StatusCodes.CONFLICT, 'Please add your Id.');
-    }
+
 
     // Check if the user is registered in Auth
-    const checkUserAuth = await Auth.findOne({ userId: payload.userId }, null, {
-      session,
-    });
+    const checkUserAuth = await Auth.findOne({ userId: payload.userId }).session(session);
+
 
     if (!checkUserAuth) {
       throw new AppError(StatusCodes.UNAUTHORIZED, 'You are not registered.');
@@ -57,26 +54,26 @@ const createStudentIntoDB = async (payload: TStudent) => {
     // Generate a student ID
     const studentId = await generateStudentId(payload.admissionDate);
 
-    if (!checkUserAuth.password || checkUserAuth.userId) {
-      const hashedPassword = await bcrypt.hash(
-        studentId,
-        Number(config.bcrypt_salt_rounds),
-      );
+    // 🔹 Prepare update data for Auth
+    const updateAuthData: Record<string, any> = {
+      isCompleted: true,
+      role: "student",
+      userId: ''
+    };
 
-      // Update using findOneAndUpdate
-      await Auth.findOneAndUpdate(
-        { userId: payload.userId }, // Query filter
-        {
-          $set: {
-            isCompleted: true,
-            role: 'student',
-            password: hashedPassword,
-            userId: '',
-          },
-        },
-        { session, new: true }, // Use the session and return the updated document
+    if (!checkUserAuth.password) {
+      updateAuthData.password = await bcrypt.hash(
+        studentId,
+        Number(config.bcrypt_salt_rounds)
       );
     }
+
+    // 🔹 Update Auth record once
+    await Auth.findOneAndUpdate(
+      { userId: payload.userId },
+      { $set: updateAuthData },
+      { session, new: true }
+    );
 
     // Create the student record, including the generated studentId
     const studentData = { ...payload, studentId, auth: checkUserAuth._id };

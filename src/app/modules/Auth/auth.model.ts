@@ -49,6 +49,12 @@ const authSchema: Schema<TUserExtends> = new Schema<TUserExtends>(
       enum: ['active', 'block'],
       default: 'active',
     },
+    otp: {
+      type: String,
+    },
+    otpExpireDate: {
+      type: Date,
+    },
     isDeleted: {
       type: Boolean,
       default: false,

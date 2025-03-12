@@ -9,11 +9,11 @@ router
   .post(attendanceController.createAttendance)
   .get(attendanceController.getAllAttendanceByCurrentMonth);
 
-router.route('/remove').put(attendanceController.deleteAttendance);
-
 router.route('/today').get(attendanceController.getTodayAttendance);
 
-router.route('/:date').get(attendanceController.getSingleDateAttendance);
-router.route('/single/:id').get(attendanceController.getSingleAttendance);
+router.route('/:date').get(attendanceController.getSingleDateAttendance)
+.put(attendanceController.updateAttendance);
+router.route('/:role/:providedId').get(attendanceController.getSingleAttendance);
 
+router.route('/remove').put(attendanceController.deleteAttendance);
 export const AttendanceRoutes = router;

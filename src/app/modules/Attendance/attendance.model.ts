@@ -14,6 +14,10 @@ const attendanceSchema: Schema<TAttendance> = new Schema<TAttendance>(
         enum: ['student', 'teacher', 'staff', 'accountant'],
         required: [true, 'User role is required.'],
       },
+      providedId: {
+        type: String,
+        required: [true, 'Provided Id is required.'],
+      },
     },
     full_name: {
       type: String,
@@ -22,7 +26,7 @@ const attendanceSchema: Schema<TAttendance> = new Schema<TAttendance>(
     },
     designation: {
       type: String,
-      required: [true, 'Designation is required.'],
+      required: [false, 'Designation is required.'],
       trim: true,
     },
     date: {

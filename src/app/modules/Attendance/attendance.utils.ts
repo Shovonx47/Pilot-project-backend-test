@@ -1,27 +1,5 @@
 import { TAttendance } from './attendance.interface';
 
-const findLastEmployeeId = async () => {
-  // const lastEmployee = await Employee.findOne(
-  //   {},
-  //   {
-  //     employeeId: 1,
-  //   },
-  // )
-  //   .sort({ createdAt: -1 })
-  //   .lean();
-
-  // return lastEmployee?.employeeId
-  //   ? lastEmployee?.employeeId.substring(2)
-  //   : undefined;
-};
-
-export const generateEmployeeId = async () => {
-  // const currentId = (await findLastEmployeeId()) || '0000';
-  // let incrementId = (Number(currentId) + 1).toString().padStart(4, '0');
-  // incrementId = `E:${incrementId}`;
-  // return incrementId;
-};
-
 export const attendanceKeys: (keyof TAttendance)[] = [
   'present',
   'absent',
@@ -30,3 +8,19 @@ export const attendanceKeys: (keyof TAttendance)[] = [
   'out_time',
   'late_status',
 ];
+
+
+
+export const getCreatedIdForUser = (existingUser: any, role: string): string => {
+  if (role === 'student') {
+    return existingUser.studentId;
+  } else if (role === 'teacher') {
+    return existingUser.teacherId;
+  } else if (role === 'staff') {
+    return existingUser.staffId;
+  } else if (role === 'accountant') {
+    return existingUser.accountantId;
+  } else {
+    throw new Error(`Invalid role: ${role}`);
+  }
+};

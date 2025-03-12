@@ -4,6 +4,7 @@ import catchAsync from '../../utils/catchAsync';
 import sendResponse from '../../utils/sendResponse';
 import { UserAuthServices } from './auth.service';
 import config from '../../config';
+import { NextFunction } from 'express';
 
 const registerUser = catchAsync(async (req, res) => {
   const result = await UserAuthServices.registerUserIntoDB(req.body);
@@ -67,9 +68,50 @@ const logout = catchAsync(async (req, res) => {
 });
 
 
+const sendForgotPasswordCode = catchAsync(async (req, res) => {
+
+  const { email } = req.body;
+
+  const result = await UserAuthServices.sendForgotPasswordCode(email);
+
+  sendResponse(res, {
+    statusCode: StatusCodes.OK,
+    success: true,
+    message: 'Password reset code has been sent to your email.',
+    data: result,
+  });
+
+});
+
+const verifyForgotPasswordUser = catchAsync(async (req, res) => {
+  await UserAuthServices.verifyForgotUserAuth(req.body);
+
+  sendResponse(res, {
+    statusCode: StatusCodes.OK,
+    success: true,
+    message: 'OTP verification successful.',
+    data: "",
+  });
+});
+
+const updateForgotPassword = catchAsync(async (req, res) => {
+  await UserAuthServices.updateForgotPasswordFromProfile(req.body);
+
+  sendResponse(res, {
+    statusCode: StatusCodes.OK,
+    success: true,
+    message: 'Password update successful!',
+    data: "",
+  });
+
+});
+
 export const userAuthController = {
   registerUser,
   loginUser,
   refreshToken,
-  logout
+  logout,
+  sendForgotPasswordCode,
+  verifyForgotPasswordUser,
+  updateForgotPassword
 };
