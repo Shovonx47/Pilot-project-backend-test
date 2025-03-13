@@ -2,18 +2,16 @@ import { StatusCodes } from 'http-status-codes';
 import AppError from '../../errors/AppError';
 import config from '../../config';
 import { TUser } from './auth.interface';
-import { createToken, generateUserId, sendEmailForUpdatePassword } from './auth.utils';
+import { createToken, generateUserId, sendEmailForRegistrationId, sendEmailForUpdatePassword } from './auth.utils';
 import { Auth } from './auth.model';
 import jwt, { JwtPayload } from 'jsonwebtoken';
 import { Response } from "express";
 import bcrypt from 'bcrypt';
 import mongoose from 'mongoose';
+import { isEmailValid } from './auth.const';
 
 const registerUserIntoDB = async (payload: TUser) => {
-  const isEmailValid = (email: string): boolean => {
-    const authRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-    return authRegex.test(email);
-  };
+  
 
   const isAuthEmail = isEmailValid(payload.email);
 
@@ -21,42 +19,68 @@ const registerUserIntoDB = async (payload: TUser) => {
     throw new Error('Invalid email.');
   }
 
-  const existingUser = await Auth.findOne({ email: payload.email });
+  const session = await mongoose.startSession();
+  session.startTransaction();
 
-  if (existingUser) {
-    throw new AppError(StatusCodes.NOT_FOUND, 'Email already exists.');
+  try {
+    // Check if email already exists
+    const existingUser = await Auth.findOne({ email: payload.email }).session(session);
+
+    if (existingUser) {
+      throw new AppError(StatusCodes.NOT_FOUND, 'Email already exists.');
+    }
+
+    // Create a new user
+    const newUser = await Auth.create(
+      [
+        {
+          ...payload,
+          userId: await generateUserId(),
+        },
+      ],
+      { session }
+    );
+
+    // Send email for Registration ID
+    await sendEmailForRegistrationId(newUser[0].email, newUser[0].name, newUser[0].userId);
+
+    // JWT Payload
+    const jwtPayload = {
+      id: newUser[0]._id,
+      email: newUser[0].email,
+      role: newUser[0].role,
+    };
+
+    const accessToken = createToken(
+      jwtPayload,
+      config.jwt_access_secret as string,
+      config.jwt_access_expires_in as string,
+    );
+
+    const refreshToken = createToken(
+      jwtPayload,
+      config.jwt_refresh_secret as string,
+      config.jwt_refresh_expires_in as string,
+    );
+
+    // Commit the transaction
+    await session.commitTransaction();
+
+    return {
+      id: newUser[0]._id,
+      role: newUser[0].role,
+      userId: newUser[0].userId,
+      token: accessToken,
+      refreshToken,
+    };
+  } catch (error) {
+    // If anything fails, abort the transaction
+    await session.abortTransaction();
+    throw error;
+  } finally {
+    // End the session
+    session.endSession();
   }
-
-  const newUser = await Auth.create({
-    ...payload,
-    userId: await generateUserId(),
-  });
-
-  const jwtPayload = {
-    id: newUser._id,
-    email: newUser.email,
-    role: newUser.role,
-  };
-
-  const accessToken = createToken(
-    jwtPayload,
-    config.jwt_access_secret as string,
-    config.jwt_access_expires_in as string,
-  );
-
-  const refreshToken = createToken(
-    jwtPayload,
-    config.jwt_refresh_secret as string,
-    config.jwt_refresh_expires_in as string,
-  );
-
-  return {
-    id: newUser._id,
-    role: newUser.role,
-    userId: newUser.userId,
-    token: accessToken,
-    refreshToken,
-  };
 };
 
 const loginUserWithDB = async (payload: TUser) => {
@@ -181,10 +205,7 @@ const sendForgotPasswordCode = async (email: string) => {
   session.startTransaction();
 
   try {
-    const isEmailValid = (email: string): boolean => {
-      const authRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-      return authRegex.test(email);
-    };
+     
 
     const isAuthEmail = isEmailValid(email);
     if (!isAuthEmail) {
@@ -217,10 +238,7 @@ const sendForgotPasswordCode = async (email: string) => {
 
 
 const verifyForgotUserAuth = async (payload: { email: string; otp: string }) => {
-  const isEmailValid = (email: string): boolean => {
-    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-    return emailRegex.test(email);
-  };
+  
 
   const date = new Date();
   const { email, otp } = payload;

@@ -41,6 +41,10 @@ export const updateFunc = async (
 };
 
 
+export const isEmailValid = (email: string): boolean => {
+  const authRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+  return authRegex.test(email);
+};
 
 
 export const USER_ROLE = {

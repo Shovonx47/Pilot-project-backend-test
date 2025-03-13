@@ -56,6 +56,25 @@ export const sendEmailVerification = async (email: string, name: string) => {
 
   return verificationOtp.code;
 };
+export const sendEmailForRegistrationId = async (email: string, name: string, code: string) => {
+
+  // Prepare email data
+  const emailData = {
+    code: code,
+    email,
+    name,
+  };
+
+  // Render email template
+  const html = await ejs.renderFile(
+    path.join(__dirname, '../../templates/email.register-id.ejs'),
+    emailData,
+  );
+
+  await sendEmail(email, 'Your registration Id', html);
+
+  return code;
+};
 
 
 export const sendEmailForUpdatePassword = async (
