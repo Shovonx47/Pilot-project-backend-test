@@ -23,17 +23,16 @@ export interface TTeacher {
   nidNumber: string;
   educationalQualification: string;
   motherTongue: string;
-  status: "Active" | "Inactive";
+  status: 'Active' | 'Inactive';
 
-
-  // payroll info 
+  // payroll info
   EPFNo?: string;
   basicSalary: string;
   workLocation: string;
   contractType: string;
   workShift: string;
 
-// parents info 
+  // parents info
 
   fatherName: string;
   fatherEmail: string;
@@ -41,27 +40,24 @@ export interface TTeacher {
   fatherOccupation: string;
   fatherNidNumber: string;
 
-
   motherName: string;
   motherEmail: string;
   motherContactNumber: string;
   motherOccupation: string;
   motherNidNumber: string;
 
-
-// address 
+  // address
 
   presentAddress: string;
   permanentAddress: string;
 
+  // bank account details
 
-  // bank account details 
-
-  accountName: string
-  accountNumber: string
-  bankName: string
-  IFSCCode: string
-  branchName: string
+  accountName: string;
+  accountNumber: string;
+  bankName: string;
+  IFSCCode: string;
+  branchName: string;
 
   // Transport Information
 
@@ -74,21 +70,17 @@ export interface TTeacher {
   hostelName?: string;
   roomNumber?: string;
 
+  // previous school
 
-// previous school 
-
-previousSchool: boolean
-previousSchoolName: string;
-previousSchoolPosition: string;
-previousSchoolRating?: string;
-previousSchoolAddress: string;
-
+  previousSchool: boolean;
+  previousSchoolName: string;
+  previousSchoolPosition: string;
+  previousSchoolRating?: string;
+  previousSchoolAddress: string;
 
   // Documents
   resume: string;
   joiningLetter: string;
 
   isDeleted: boolean;
-
 }
- 

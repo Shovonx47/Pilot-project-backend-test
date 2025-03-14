@@ -15,7 +15,9 @@ router
     validateRequest(studentValidation.studentValidationSchema),
     studentController.createStudent,
   )
-  .get(authorization(USER_ROLE.super_admin), studentController.getAllStudents);
+  .get(
+    // authorization(USER_ROLE.super_admin), 
+    studentController.getAllStudents);
 
 router
   .route('/:id')

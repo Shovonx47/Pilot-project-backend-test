@@ -64,7 +64,6 @@ const createTeacherIntoDB = async (payload: TTeacher) => {
       );
     }
     if (checkUserAuth.password && checkUserAuth.userId) {
-
       await Auth.findOneAndUpdate(
         { userId: payload.userId }, // Query filter
         {
@@ -102,8 +101,6 @@ const createTeacherIntoDB = async (payload: TTeacher) => {
     throw error;
   }
 };
-
-
 
 const getAllTeacherFromDB = async (query: Record<string, unknown>) => {
   const teacherQuery = new QueryBuilder(Teacher.find(), query)

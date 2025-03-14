@@ -7,7 +7,9 @@ import { TExaminationSchedule } from './exam-schedule.interface';
 import { ExaminationSchedule } from './exam-schedule.model';
 import moment from 'moment';
 
-const createExaminationScheduleIntoDB = async (payload: TExaminationSchedule) => {
+const createExaminationScheduleIntoDB = async (
+  payload: TExaminationSchedule,
+) => {
   // Check if ExamSetting already exists
 
   const existingExamSetting = await ExaminationSchedule.findOne({
@@ -19,21 +21,21 @@ const createExaminationScheduleIntoDB = async (payload: TExaminationSchedule) =>
   if (existingExamSetting) {
     throw new AppError(
       StatusCodes.CONFLICT,
-      `An exam result already exists for ${payload.class} on ${payload.examName}.`
+      `An exam result already exists for ${payload.class} on ${payload.examName}.`,
     );
   }
 
   // Calculate durationMinutes based on startTime and endTime
   const updatedExams = payload.exams.map((exam) => {
     if (exam.startTime && exam.endTime) {
-      const start = moment(exam.startTime, "HH:mm"); // Parse as 24-hour format
-      const end = moment(exam.endTime, "HH:mm");
-      const durationMinutes = end.diff(start, "minutes");
+      const start = moment(exam.startTime, 'HH:mm'); // Parse as 24-hour format
+      const end = moment(exam.endTime, 'HH:mm');
+      const durationMinutes = end.diff(start, 'minutes');
 
       if (durationMinutes <= 0) {
         throw new AppError(
           StatusCodes.BAD_REQUEST,
-          `End time must be after start time for ${exam.courseName}.`
+          `End time must be after start time for ${exam.courseName}.`,
         );
       }
 
@@ -87,14 +89,14 @@ const updateExaminationScheduleInDB = async (
 ) => {
   const updatedExams = payload.exams.map((exam) => {
     if (exam.startTime && exam.endTime) {
-      const start = moment(exam.startTime, "HH:mm"); // Parse as 24-hour format
-      const end = moment(exam.endTime, "HH:mm");
-      const durationMinutes = end.diff(start, "minutes");
+      const start = moment(exam.startTime, 'HH:mm'); // Parse as 24-hour format
+      const end = moment(exam.endTime, 'HH:mm');
+      const durationMinutes = end.diff(start, 'minutes');
 
       if (durationMinutes <= 0) {
         throw new AppError(
           StatusCodes.BAD_REQUEST,
-          `End time must be after start time for ${exam.courseName}.`
+          `End time must be after start time for ${exam.courseName}.`,
         );
       }
 
@@ -112,10 +114,7 @@ const updateExaminationScheduleInDB = async (
     });
 
   if (!updatedExaminationSchedule) {
-    throw new AppError(
-      StatusCodes.NOT_FOUND,
-      'Exam schedule not found.',
-    );
+    throw new AppError(StatusCodes.NOT_FOUND, 'Exam schedule not found.');
   }
 
   return updatedExaminationSchedule;
@@ -127,10 +126,7 @@ const deleteExaminationScheduleFromDB = async (id: string) => {
 
   // Check if ExaminationSchedule exists
   if (!examinationSchedule) {
-    throw new AppError(
-      StatusCodes.NOT_FOUND,
-      'Exam schedule not found.',
-    );
+    throw new AppError(StatusCodes.NOT_FOUND, 'Exam schedule not found.');
   }
 
   // Mark the ExaminationSchedule as deleted

@@ -7,7 +7,7 @@ export interface TExaminationSchedule {
   description: string;
   exams: Array<{
     courseName: string;
-    courseCode: string; 
+    courseCode: string;
     maxMark: string;
     startTime: string;
     endTime: string;

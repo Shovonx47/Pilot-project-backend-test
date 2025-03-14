@@ -1,8 +1,6 @@
 import mongoose, { Model, Schema } from 'mongoose';
 import { TStudent, TSibling } from './student.interface';
 
-
-
 const SiblingSchema: Schema<TSibling> = new Schema(
   {
     siblingName: { type: String, required: false },
@@ -32,27 +30,62 @@ const StudentSchema: Schema<TStudent> = new Schema(
       },
     ],
     userId: { type: String, required: [true, 'User ID is required'] },
-    studentId: { type: String, required: [true, 'Student ID is required'], trim: true },
-    profileImage: { type: String, required: [true, 'Profile image is required'] },
-    academicYear: { type: String, required: [true, 'Academic year is required'] },
-    admissionDate: { type: String, required: [true, 'Admission date is required'] },
-    status: { type: String, required: [true, 'Status is required'], enum: ["Active", "Inactive"] },
+    studentId: {
+      type: String,
+      required: [true, 'Student ID is required'],
+      trim: true,
+    },
+    profileImage: {
+      type: String,
+      required: [true, 'Profile image is required'],
+    },
+    academicYear: {
+      type: String,
+      required: [true, 'Academic year is required'],
+    },
+    admissionDate: {
+      type: String,
+      required: [true, 'Admission date is required'],
+    },
+    status: {
+      type: String,
+      required: [true, 'Status is required'],
+      enum: ['Active', 'Inactive'],
+    },
     category: { type: String, required: [true, 'Category is required'] },
     firstName: { type: String, required: [true, 'First name is required'] },
     lastName: { type: String, required: [true, 'Last name is required'] },
+    previousClass: [{ type: String, required: false }],
+    previousClassRoll: [{ type: String, required: false }],
+    roll: { type: String, required: [true, 'Roll is required'] },
     class: { type: String, required: [true, 'Class is required'] },
     section: { type: String, required: [true, 'Section is required'] },
     gender: { type: String, required: [true, 'Gender is required'] },
-    dateOfBirth: { type: String, required: [true, 'Date of birth is required'] },
+    dateOfBirth: {
+      type: String,
+      required: [true, 'Date of birth is required'],
+    },
     bloodGroup: { type: String, required: [true, 'Blood group is required'] },
     religion: { type: String, required: [true, 'Religion is required'] },
-    contactNumber: { type: String, required: [true, 'Contact number is required'] },
+    contactNumber: {
+      type: String,
+      required: [true, 'Contact number is required'],
+    },
     email: { type: String, required: [true, 'Email is required'] },
     board: { type: String, required: [true, 'Board is required'] },
-    motherTongue: { type: String, required: [true, 'Mother tongue is required'] },
+    motherTongue: {
+      type: String,
+      required: [true, 'Mother tongue is required'],
+    },
 
-    presentAddress: { type: String, required: [true, 'Present address is required'] },
-    permanentAddress: { type: String, required: [true, 'Permanent address is required'] },
+    presentAddress: {
+      type: String,
+      required: [true, 'Present address is required'],
+    },
+    permanentAddress: {
+      type: String,
+      required: [true, 'Permanent address is required'],
+    },
 
     previousSchoolName: {
       type: String,
@@ -74,23 +107,65 @@ const StudentSchema: Schema<TStudent> = new Schema(
 
     // Guardian Details
     fatherName: { type: String, required: [true, "Father's name is required"] },
-    fatherEmail: { type: String, required: [true, "Father's email is required"] },
-    fatherContactNumber: { type: String, required: [true, "Father's contact number is required"] },
-    fatherOccupation: { type: String, required: [true, "Father's occupation is required"] },
-    fatherNidNumber: { type: String, required: [true, "Father's NID number is required"] },
+    fatherEmail: {
+      type: String,
+      required: [true, "Father's email is required"],
+    },
+    fatherContactNumber: {
+      type: String,
+      required: [true, "Father's contact number is required"],
+    },
+    fatherOccupation: {
+      type: String,
+      required: [true, "Father's occupation is required"],
+    },
+    fatherNidNumber: {
+      type: String,
+      required: [true, "Father's NID number is required"],
+    },
 
     motherName: { type: String, required: [true, "Mother's name is required"] },
-    motherEmail: { type: String, required: [true, "Mother's email is required"] },
-    motherContactNumber: { type: String, required: [true, "Mother's contact number is required"] },
-    motherOccupation: { type: String, required: [true, "Mother's occupation is required"] },
-    motherNidNumber: { type: String, required: [true, "Mother's NID number is required"] },
+    motherEmail: {
+      type: String,
+      required: [true, "Mother's email is required"],
+    },
+    motherContactNumber: {
+      type: String,
+      required: [true, "Mother's contact number is required"],
+    },
+    motherOccupation: {
+      type: String,
+      required: [true, "Mother's occupation is required"],
+    },
+    motherNidNumber: {
+      type: String,
+      required: [true, "Mother's NID number is required"],
+    },
 
-    localGuardianName: { type: String, required: [false, 'Local guardian name is required'] },
-    relationshipWithLocalGuardian: { type: String, required: [false, 'Relationship with local guardian is required'] },
-    localGuardianEmail: { type: String, required: [false, 'Local guardian email is required'] },
-    localGuardianContactNumber: { type: String, required: [false, 'Local guardian contact number is required'] },
-    localGuardianOccupation: { type: String, required: [false, 'Local guardian occupation is required'] },
-    localGuardianNidNumber: { type: String, required: [false, 'Local guardian NID number is required'] },
+    localGuardianName: {
+      type: String,
+      required: [false, 'Local guardian name is required'],
+    },
+    relationshipWithLocalGuardian: {
+      type: String,
+      required: [false, 'Relationship with local guardian is required'],
+    },
+    localGuardianEmail: {
+      type: String,
+      required: [false, 'Local guardian email is required'],
+    },
+    localGuardianContactNumber: {
+      type: String,
+      required: [false, 'Local guardian contact number is required'],
+    },
+    localGuardianOccupation: {
+      type: String,
+      required: [false, 'Local guardian occupation is required'],
+    },
+    localGuardianNidNumber: {
+      type: String,
+      required: [false, 'Local guardian NID number is required'],
+    },
 
     // Transport Information
     route: { type: String, required: false },
@@ -103,7 +178,10 @@ const StudentSchema: Schema<TStudent> = new Schema(
 
     // Documents
     transferCertificate: { type: String, required: false },
-    birthCertificate: { type: String, required: [true, 'Birth certificate is required'] },
+    birthCertificate: {
+      type: String,
+      required: [true, 'Birth certificate is required'],
+    },
 
     isDeleted: { type: Boolean, default: false },
   },
@@ -111,7 +189,7 @@ const StudentSchema: Schema<TStudent> = new Schema(
 );
 
 StudentSchema.pre('find', function (next) {
-  this.where({ isDeleted: false }); // Check isDeleted   
+  this.where({ isDeleted: false }); // Check isDeleted
   next();
 });
 
@@ -125,5 +203,7 @@ StudentSchema.pre('aggregate', function (next) {
   next();
 });
 
-
-export const Student: Model<TStudent> = mongoose.model<TStudent>('Student', StudentSchema);
+export const Student: Model<TStudent> = mongoose.model<TStudent>(
+  'Student',
+  StudentSchema,
+);

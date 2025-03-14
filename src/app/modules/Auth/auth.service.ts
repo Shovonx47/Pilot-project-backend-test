@@ -2,17 +2,20 @@ import { StatusCodes } from 'http-status-codes';
 import AppError from '../../errors/AppError';
 import config from '../../config';
 import { TUser } from './auth.interface';
-import { createToken, generateUserId, sendEmailForRegistrationId, sendEmailForUpdatePassword } from './auth.utils';
+import {
+  createToken,
+  generateUserId,
+  sendEmailForRegistrationId,
+  sendEmailForUpdatePassword,
+} from './auth.utils';
 import { Auth } from './auth.model';
 import jwt, { JwtPayload } from 'jsonwebtoken';
-import { Response } from "express";
+import { Response } from 'express';
 import bcrypt from 'bcrypt';
 import mongoose from 'mongoose';
 import { isEmailValid } from './auth.const';
 
 const registerUserIntoDB = async (payload: TUser) => {
-  
-
   const isAuthEmail = isEmailValid(payload.email);
 
   if (!isAuthEmail) {
@@ -24,7 +27,9 @@ const registerUserIntoDB = async (payload: TUser) => {
 
   try {
     // Check if email already exists
-    const existingUser = await Auth.findOne({ email: payload.email }).session(session);
+    const existingUser = await Auth.findOne({ email: payload.email }).session(
+      session,
+    );
 
     if (existingUser) {
       throw new AppError(StatusCodes.NOT_FOUND, 'Email already exists.');
@@ -38,11 +43,15 @@ const registerUserIntoDB = async (payload: TUser) => {
           userId: await generateUserId(),
         },
       ],
-      { session }
+      { session },
     );
 
     // Send email for Registration ID
-    await sendEmailForRegistrationId(newUser[0].email, newUser[0].name, newUser[0].userId);
+    await sendEmailForRegistrationId(
+      newUser[0].email,
+      newUser[0].name,
+      newUser[0].userId,
+    );
 
     // JWT Payload
     const jwtPayload = {
@@ -97,11 +106,9 @@ const loginUserWithDB = async (payload: TUser) => {
     throw new AppError(StatusCodes.FORBIDDEN, 'This account is deleted!');
   }
 
-
   const isPasswordValid = await existingUser.comparePassword(
     password as string,
   );
-
 
   if (!isPasswordValid) {
     throw new Error('Invalid password!');
@@ -131,7 +138,6 @@ const loginUserWithDB = async (payload: TUser) => {
     refreshToken,
   };
 };
-
 
 const refreshToken = async (token: string) => {
   // checking if the given token is valid
@@ -164,7 +170,10 @@ const refreshToken = async (token: string) => {
 
   if (
     existingUser.passwordChangedAt &&
-    Auth.isJWTIssuedBeforePasswordChanged(existingUser.passwordChangedAt, iat as number)
+    Auth.isJWTIssuedBeforePasswordChanged(
+      existingUser.passwordChangedAt,
+      iat as number,
+    )
   ) {
     throw new AppError(StatusCodes.UNAUTHORIZED, 'You are not authorized !');
   }
@@ -185,31 +194,28 @@ const refreshToken = async (token: string) => {
   };
 };
 
-
-
 const logout = async (res: Response) => {
   // Clear refreshToken cookie
-  res.clearCookie("refreshToken", {
+  res.clearCookie('refreshToken', {
     httpOnly: true,
-    secure: process.env.NODE_ENV === "production",
-    sameSite: "strict",
+    secure: process.env.NODE_ENV === 'production',
+    sameSite: 'strict',
     // sameSite: "none",
   });
 
-  return { message: "Logged out successfully" };
-}
-
+  return { message: 'Logged out successfully' };
+};
 
 const sendForgotPasswordCode = async (email: string) => {
   const session = await mongoose.startSession();
   session.startTransaction();
 
   try {
-     
-
     const isAuthEmail = isEmailValid(email);
     if (!isAuthEmail) {
-      throw new Error('Authentication failed. Please enter a valid email address.');
+      throw new Error(
+        'Authentication failed. Please enter a valid email address.',
+      );
     }
 
     const existingUser = await Auth.findOne({ email }).session(session);
@@ -236,10 +242,10 @@ const sendForgotPasswordCode = async (email: string) => {
   }
 };
 
-
-const verifyForgotUserAuth = async (payload: { email: string; otp: string }) => {
-  
-
+const verifyForgotUserAuth = async (payload: {
+  email: string;
+  otp: string;
+}) => {
   const date = new Date();
   const { email, otp } = payload;
 
@@ -249,10 +255,9 @@ const verifyForgotUserAuth = async (payload: { email: string; otp: string }) => 
 
   const isAuthEmail = isEmailValid(email);
 
-
   if (!isAuthEmail) {
     throw new Error(
-      'Authentication failed. Please enter a valid email address.'
+      'Authentication failed. Please enter a valid email address.',
     );
   }
 
@@ -314,11 +319,19 @@ const updateForgotPasswordFromProfile = async (payload: {
     { new: true, runValidators: true },
   );
 
-  return result
+  return result;
 };
 
 
+const getSingleAuthDetails = async (id: string) => {
+  const singleUser = await Auth.findOne({ userId: id });
 
+  if (!singleUser) {
+    throw new AppError(StatusCodes.NOT_FOUND, 'No user found');
+  }
+
+  return singleUser;
+};
 
 
 
@@ -329,5 +342,6 @@ export const UserAuthServices = {
   logout,
   sendForgotPasswordCode,
   verifyForgotUserAuth,
-  updateForgotPasswordFromProfile
+  updateForgotPasswordFromProfile,
+  getSingleAuthDetails
 };

@@ -1,6 +1,6 @@
 import express from 'express';
 import validateRequest from '../../middlewares/validateRequest';
- 
+
 import { ExaminationScheduleController } from './exam-schedule.controller';
 import { examScheduleValidation } from './exam-schedule.validation';
 
@@ -10,9 +10,7 @@ router
   .route('/')
   .post(
     // authorization(USER_ROLE.super_admin, USER_ROLE.admin),
-    validateRequest(
-      examScheduleValidation.examScheduleValidationSchema,
-    ),
+    validateRequest(examScheduleValidation.examScheduleValidationSchema),
     ExaminationScheduleController.createExaminationSchedule,
   )
   .get(ExaminationScheduleController.getAllExaminationSchedule);
@@ -22,9 +20,7 @@ router
   .get(ExaminationScheduleController.getSingleExaminationSchedule)
   .put(
     // authorization(USER_ROLE.super_admin),
-    validateRequest(
-      examScheduleValidation.updateExamScheduleValidationSchema,
-    ),
+    validateRequest(examScheduleValidation.updateExamScheduleValidationSchema),
     ExaminationScheduleController.updateExaminationSchedule,
   )
   .delete(ExaminationScheduleController.deleteExaminationSchedule);

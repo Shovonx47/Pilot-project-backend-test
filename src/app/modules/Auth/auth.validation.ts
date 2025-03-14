@@ -42,8 +42,6 @@ const userAuthValidationSchemaForLogin = z.object({
   }),
 });
 
-
-
 const refreshTokenValidationSchema = z.object({
   cookies: z.object({
     refreshToken: z.string({
@@ -54,5 +52,5 @@ const refreshTokenValidationSchema = z.object({
 export const AuthValidation = {
   userAuthValidationSchemaForCreateUser,
   userAuthValidationSchemaForLogin,
-  refreshTokenValidationSchema
+  refreshTokenValidationSchema,
 };

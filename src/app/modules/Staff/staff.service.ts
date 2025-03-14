@@ -63,7 +63,6 @@ const createStaffIntoDB = async (payload: TStaff) => {
       );
     }
     if (userAuth.password && userAuth.userId) {
-      
       await Auth.findOneAndUpdate(
         { userId: payload.userId },
         {

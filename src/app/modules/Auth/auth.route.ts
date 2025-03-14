@@ -20,16 +20,20 @@ router
     validateRequest(AuthValidation.userAuthValidationSchemaForLogin),
     userAuthController.loginUser,
   );
- 
-  router.post(
-    '/refresh-token',
-    validateRequest(AuthValidation.refreshTokenValidationSchema),
-    userAuthController.refreshToken,
-  );
-  router.post("/logout", userAuthController.logout);
+
+router.post(
+  '/refresh-token',
+  validateRequest(AuthValidation.refreshTokenValidationSchema),
+  userAuthController.refreshToken,
+);
+router.post('/logout', userAuthController.logout);
+
+router
+  .route('/:action(send-verify-code|verify-otp|update-forgot-password)')
+  .put(updateFunc);
+
   
-  router
-  .route(
-    '/:action(send-verify-code|verify-otp|update-forgot-password)').put(updateFunc);
+router.get('/:userId', userAuthController.getSingleUser)
+
 
 export const AuthRoutes = router;

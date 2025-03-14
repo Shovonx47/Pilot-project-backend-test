@@ -4,7 +4,7 @@ import catchAsync from '../../utils/catchAsync';
 import sendResponse from '../../utils/sendResponse';
 import { UserAuthServices } from './auth.service';
 import config from '../../config';
-import { NextFunction } from 'express';
+
 
 const registerUser = catchAsync(async (req, res) => {
   const result = await UserAuthServices.registerUserIntoDB(req.body);
@@ -29,9 +29,7 @@ const loginUser = catchAsync(async (req, res) => {
     // sameSite: "none",
     // path: "/",
     // maxAge: 7 * 24 * 60 * 60 * 1000, // 7 days
-
   });
-
 
   sendResponse(res, {
     statusCode: StatusCodes.OK,
@@ -40,7 +38,6 @@ const loginUser = catchAsync(async (req, res) => {
     data: token,
   });
 });
-
 
 const refreshToken = catchAsync(async (req, res) => {
   const { refreshToken } = req.cookies;
@@ -54,22 +51,18 @@ const refreshToken = catchAsync(async (req, res) => {
   });
 });
 
-
 const logout = catchAsync(async (req, res) => {
   await UserAuthServices.logout(res);
-
 
   sendResponse(res, {
     statusCode: StatusCodes.OK,
     success: true,
     message: 'Logout successful.',
-    data: "",
+    data: '',
   });
 });
 
-
 const sendForgotPasswordCode = catchAsync(async (req, res) => {
-
   const { email } = req.body;
 
   const result = await UserAuthServices.sendForgotPasswordCode(email);
@@ -80,7 +73,6 @@ const sendForgotPasswordCode = catchAsync(async (req, res) => {
     message: 'Password reset code has been sent to your email.',
     data: result,
   });
-
 });
 
 const verifyForgotPasswordUser = catchAsync(async (req, res) => {
@@ -90,7 +82,7 @@ const verifyForgotPasswordUser = catchAsync(async (req, res) => {
     statusCode: StatusCodes.OK,
     success: true,
     message: 'OTP verification successful.',
-    data: "",
+    data: '',
   });
 });
 
@@ -101,10 +93,25 @@ const updateForgotPassword = catchAsync(async (req, res) => {
     statusCode: StatusCodes.OK,
     success: true,
     message: 'Password update successful!',
-    data: "",
+    data: '',
   });
-
 });
+
+
+const getSingleUser = catchAsync(async (req, res) => {
+  const { userId } = req.params;
+
+  const result = await UserAuthServices.getSingleAuthDetails(userId);
+
+  sendResponse(res, {
+    statusCode: StatusCodes.OK,
+    success: true,
+    message: 'Teacher retrieved successful!',
+    data: result,
+  });
+});
+
+
 
 export const userAuthController = {
   registerUser,
@@ -113,5 +120,6 @@ export const userAuthController = {
   logout,
   sendForgotPasswordCode,
   verifyForgotPasswordUser,
-  updateForgotPassword
+  updateForgotPassword,
+  getSingleUser
 };

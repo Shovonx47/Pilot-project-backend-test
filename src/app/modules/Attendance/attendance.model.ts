@@ -43,7 +43,7 @@ const attendanceSchema: Schema<TAttendance> = new Schema<TAttendance>(
     },
     office_time: {
       type: String,
-      required: [true, 'Office time is required.'],
+       
     },
     in_time: {
       type: String,
@@ -60,8 +60,11 @@ const attendanceSchema: Schema<TAttendance> = new Schema<TAttendance>(
   },
   {
     timestamps: true,
-  }
+  },
 );
 
 // Create and export the Attendance model
-export const Attendance = mongoose.model<TAttendance>('Attendance', attendanceSchema);
+export const Attendance = mongoose.model<TAttendance>(
+  'Attendance',
+  attendanceSchema,
+);

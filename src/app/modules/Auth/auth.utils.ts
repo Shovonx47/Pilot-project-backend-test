@@ -4,7 +4,6 @@ import ejs from 'ejs';
 import path from 'path';
 import { sendEmail } from '../../utils/sendEmail';
 
-
 export const generateUserId = async () => {
   const currentYear = new Date().getFullYear().toString().slice(-2);
   // Generate a random 4-digit number and pad it to ensure 4 digits.
@@ -16,7 +15,7 @@ export const generateUserId = async () => {
 };
 
 export const createToken = (
-  jwtPayload: { email: string; role: string, id?: Types.ObjectId },
+  jwtPayload: { email: string; role: string; id?: Types.ObjectId },
   secret: string,
   expiresIn: string,
 ) => {
@@ -24,9 +23,6 @@ export const createToken = (
     expiresIn,
   });
 };
-
-
-
 
 export const createVerificationOTP = () => {
   const code = Math.floor(100000 + Math.random() * 900000).toString();
@@ -56,8 +52,11 @@ export const sendEmailVerification = async (email: string, name: string) => {
 
   return verificationOtp.code;
 };
-export const sendEmailForRegistrationId = async (email: string, name: string, code: string) => {
-
+export const sendEmailForRegistrationId = async (
+  email: string,
+  name: string,
+  code: string,
+) => {
   // Prepare email data
   const emailData = {
     code: code,
@@ -75,7 +74,6 @@ export const sendEmailForRegistrationId = async (email: string, name: string, co
 
   return code;
 };
-
 
 export const sendEmailForUpdatePassword = async (
   email: string,
