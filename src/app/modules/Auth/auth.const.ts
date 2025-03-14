@@ -1,24 +1,21 @@
 import { NextFunction, Request, Response } from 'express';
 import { Action } from './auth.interface';
 import { userAuthController } from './auth.controller';
- 
-
 
 export const actionMap: Record<
-Action,
-(req: Request, res: Response, next: NextFunction) => Promise<void>
+  Action,
+  (req: Request, res: Response, next: NextFunction) => Promise<void>
 > = {
-'send-verify-code': async (req, res, next) => {
-  userAuthController.sendForgotPasswordCode(req, res, next);
-},
-'verify-otp': async (req, res, next) => {
-  userAuthController.verifyForgotPasswordUser(req, res, next);
-},
-'update-forgot-password': async (req, res, next) => {
-  userAuthController.updateForgotPassword(req, res, next);
-},
+  'send-verify-code': async (req, res, next) => {
+    userAuthController.sendForgotPasswordCode(req, res, next);
+  },
+  'verify-otp': async (req, res, next) => {
+    userAuthController.verifyForgotPasswordUser(req, res, next);
+  },
+  'update-forgot-password': async (req, res, next) => {
+    userAuthController.updateForgotPassword(req, res, next);
+  },
 };
-
 
 export const updateFunc = async (
   req: Request,
@@ -40,12 +37,10 @@ export const updateFunc = async (
   }
 };
 
-
 export const isEmailValid = (email: string): boolean => {
   const authRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
   return authRegex.test(email);
 };
-
 
 export const USER_ROLE = {
   teacher: 'teacher',

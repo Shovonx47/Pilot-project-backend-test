@@ -1,6 +1,4 @@
-import { Staff } from "./staff.model";
-
- 
+import { Staff } from './staff.model';
 
 const findLastStaffIdForYear = async (year: string) => {
   const lastStaff = await Staff.findOne({

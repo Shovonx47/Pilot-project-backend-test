@@ -7,7 +7,7 @@ export type TDays =
   | 'Saturday'
   | 'Sunday';
 interface TOffDays {
-  title: string;  // Name of the off day or occasion, e.g., "Teacher's Day" or "National Holiday"
+  title: string; // Name of the off day or occasion, e.g., "Teacher's Day" or "National Holiday"
   description: string; // Optional: Brief description of the off day
   startDay: TDays; // Name of the off day or occasion, e.g., "Teacher's Day" or "National Holiday"
   endDay?: TDays; // Name of the off day or occasion, e.g., "Teacher's Day" or "National Holiday"
@@ -17,9 +17,8 @@ interface TOffDays {
   // Optional: Flag for soft deletion
 }
 
-
 export interface TOffDaySetup {
-  offDays: TOffDays[]
+  offDays: TOffDays[];
   createdBy: string;
   isDeleted: boolean;
 }

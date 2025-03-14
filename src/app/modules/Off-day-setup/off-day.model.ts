@@ -28,9 +28,6 @@ const OffDaySchema = new Schema(
     endDay: {
       type: String,
     },
-
-
-
   },
   {
     _id: false, // This prevents Mongoose from adding an _id field to the subdocument
@@ -48,9 +45,8 @@ const OffDaySetupSchema = new Schema<TOffDaySetup>(
       type: Boolean,
       default: false,
     },
-
   },
-  { timestamps: true }
+  { timestamps: true },
 );
 
 // Middleware to filter out deleted records
@@ -71,5 +67,5 @@ OffDaySetupSchema.pre('aggregate', function (next) {
 
 export const OffDaySetup: Model<TOffDaySetup> = mongoose.model<TOffDaySetup>(
   'OffDaySetup',
-  OffDaySetupSchema
+  OffDaySetupSchema,
 );

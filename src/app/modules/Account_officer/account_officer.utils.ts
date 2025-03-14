@@ -1,8 +1,4 @@
-import { AccountOfficer } from "./account_officer.model";
-
- 
-
- 
+import { AccountOfficer } from './account_officer.model';
 
 const findLastAccountantIdForYear = async (year: string) => {
   const lastStaff = await AccountOfficer.findOne({
@@ -12,7 +8,9 @@ const findLastAccountantIdForYear = async (year: string) => {
     .select('accountantId')
     .lean();
 
-  return lastStaff?.accountantId ? lastStaff.accountantId.substring(5) : undefined;
+  return lastStaff?.accountantId
+    ? lastStaff.accountantId.substring(5)
+    : undefined;
 };
 
 export const generateAccountantId = async (joiningDate: string) => {

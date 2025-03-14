@@ -18,4 +18,11 @@ export default {
   SMTPUSER: process.env.SMTPUSER,
   SMTPPASS: process.env.SMTPPASS,
   SUPPORTEMAIl: process.env.SUPPORTEMAIl,
+
+
+  student_class_time: process.env.STUDENT_CLASS_TIME,
+  teacher_office_time: process.env.TEACHER_OFFICE_TIME,
+  staff_office_time: process.env.STAFF_OFFICE_TIME,
+  accountant_office_time: process.env.ACCOUNTANT_OFFICE_TIME,
+
 };

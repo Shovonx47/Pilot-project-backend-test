@@ -1,10 +1,10 @@
-import { Types } from "mongoose";
+import { Types } from 'mongoose';
 
 export interface TAttendance {
   user: {
     id: Types.ObjectId;
     role: 'student' | 'teacher' | 'staff' | 'accountant';
-    providedId: string
+    providedId: string;
   };
   designation?: string;
   full_name: string;

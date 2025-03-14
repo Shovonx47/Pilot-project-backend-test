@@ -1,4 +1,3 @@
-
 import { Student } from './student.model';
 
 const findLastStudentIdForYear = async (year: string) => {
@@ -9,11 +8,16 @@ const findLastStudentIdForYear = async (year: string) => {
     .select('studentId')
     .lean();
 
-  return lastStudent?.studentId ? lastStudent.studentId.substring(4) : undefined;
+  return lastStudent?.studentId
+    ? lastStudent.studentId.substring(4)
+    : undefined;
 };
 
 export const generateStudentId = async (admissionDate: string) => {
-  const admissionYear = new Date(admissionDate).getFullYear().toString().slice(-2);
+  const admissionYear = new Date(admissionDate)
+    .getFullYear()
+    .toString()
+    .slice(-2);
 
   let currentId = await findLastStudentIdForYear(admissionYear);
 
@@ -26,43 +30,40 @@ export const generateStudentId = async (admissionDate: string) => {
   return `S-${admissionYear}${incrementId}`;
 };
 
+const findLastStudentRollForClass = async (year: string, className: string) => {
+  const lastStudent = await Student.findOne({
+    admissionDate: new RegExp(`-${year}$`), // Match any date ending with '-YYYY'
+    class: className,
+  })
+    .sort({ roll: -1 })
+    .select('roll')
+    .lean();
 
+  return lastStudent?.roll ? lastStudent.roll : undefined;
+};
 
+export const generateStudentRoll = async (
+  admissionDate: string,
+  className: string,
+) => {
+  const formattedDate = formatDateToDDMMYYYY(admissionDate); // Normalize date format
 
+  const admissionYear = formattedDate.split('-')[2]; // Extract '2025' from '05-03-2025'
 
+  // Generate Roll Number Based on Class
+  const lastRoll = await findLastStudentRollForClass(admissionYear, className);
+  const newRoll = lastRoll ? (Number(lastRoll) + 1).toString() : 1;
 
+  return newRoll;
+};
 
+const formatDateToDDMMYYYY = (dateString: string): string => {
+  const date = new Date(dateString); // Convert input to Date object
+  if (isNaN(date.getTime())) throw new Error('Invalid date format'); // Handle invalid dates
 
+  const day = date.getDate().toString().padStart(2, '0'); // Ensure two-digit day
+  const month = (date.getMonth() + 1).toString().padStart(2, '0'); // Ensure two-digit month
+  const year = date.getFullYear(); // Get full year
 
-
-
-
-
-// import { Student } from './student.model';
-
-// const findLastStudentId = async () => {
-//   const lastStudent = await Student.findOne({ studentId: { $exists: true } })
-//     .sort({ createdAt: -1 })
-//     .select('studentId')
-//     .lean();
-
-//   return lastStudent?.studentId
-//     ? lastStudent?.studentId.substring(4)
-//     : undefined;
-// };
-
-// export const generateStudentId = async (admissionDate: string) => {
-//   const admissionYear = new Date(admissionDate).getFullYear().toString().slice(-2);
-//   const currentYear = new Date().getFullYear().toString().slice(-2);
-
-//   if (admissionYear !== currentYear) {
-//     return `S-${admissionYear}0001`;
-//   }
-
-//   const currentId = await findLastStudentId();
-//   const incrementId = (Number(currentId) + 1).toString().padStart(4, '0');
-
-//   return `S-${admissionYear}${incrementId}`;
-// };
-
-
+  return `${day}-${month}-${year}`; // Return in 'DD-MM-YYYY' format
+};

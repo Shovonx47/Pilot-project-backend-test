@@ -1,7 +1,5 @@
 import { z } from 'zod';
 
-
-
 const siblingSchema = z.object({
   siblingName: z.string().optional(),
   class: z.string().optional(),
@@ -17,9 +15,9 @@ const studentValidationSchema = z.object({
     profileImage: z.string({ required_error: 'Profile image is required' }),
     academicYear: z.string({ required_error: 'Academic year is required' }),
     admissionDate: z.string({ required_error: 'Admission date is required' }),
-    status: z.enum(["Active", "Inactive"], {
-      required_error: "Status is required",
-      invalid_type_error: "Invalid status selected",
+    status: z.enum(['Active', 'Inactive'], {
+      required_error: 'Status is required',
+      invalid_type_error: 'Invalid status selected',
     }),
     category: z.string({ required_error: 'Category is required' }),
     firstName: z.string({ required_error: 'First name is required' }),
@@ -31,12 +29,16 @@ const studentValidationSchema = z.object({
     bloodGroup: z.string({ required_error: 'Blood group is required' }),
     religion: z.string({ required_error: 'Religion is required' }),
     contactNumber: z.string({ required_error: 'Contact number is required' }),
-    email: z.string({ required_error: 'Email is required' }).email('Invalid email address'),
+    email: z
+      .string({ required_error: 'Email is required' })
+      .email('Invalid email address'),
     board: z.string({ required_error: 'Board is required' }),
     motherTongue: z.string({ required_error: 'Mother tongue is required' }),
 
     presentAddress: z.string({ required_error: 'Present address is required' }),
-    permanentAddress: z.string({ required_error: 'Permanent address is required' }),
+    permanentAddress: z.string({
+      required_error: 'Permanent address is required',
+    }),
 
     previousSchoolName: z.string().optional(),
     previousClassName: z.string().optional(),
@@ -45,16 +47,32 @@ const studentValidationSchema = z.object({
     siblings: z.array(siblingSchema).optional(),
 
     fatherName: z.string({ required_error: "Father's name is required" }),
-    fatherEmail: z.string({ required_error: "Father's email is required" }).email(),
-    fatherContactNumber: z.string({ required_error: "Father's contact number is required" }),
-    fatherOccupation: z.string({ required_error: "Father's occupation is required" }),
-    fatherNidNumber: z.string({ required_error: "Father's NID number is required" }),
+    fatherEmail: z
+      .string({ required_error: "Father's email is required" })
+      .email(),
+    fatherContactNumber: z.string({
+      required_error: "Father's contact number is required",
+    }),
+    fatherOccupation: z.string({
+      required_error: "Father's occupation is required",
+    }),
+    fatherNidNumber: z.string({
+      required_error: "Father's NID number is required",
+    }),
 
     motherName: z.string({ required_error: "Mother's name is required" }),
-    motherEmail: z.string({ required_error: "Mother's email is required" }).email(),
-    motherContactNumber: z.string({ required_error: "Mother's contact number is required" }),
-    motherOccupation: z.string({ required_error: "Mother's occupation is required" }),
-    motherNidNumber: z.string({ required_error: "Mother's NID number is required" }),
+    motherEmail: z
+      .string({ required_error: "Mother's email is required" })
+      .email(),
+    motherContactNumber: z.string({
+      required_error: "Mother's contact number is required",
+    }),
+    motherOccupation: z.string({
+      required_error: "Mother's occupation is required",
+    }),
+    motherNidNumber: z.string({
+      required_error: "Mother's NID number is required",
+    }),
 
     localGuardianName: z.string().optional(),
     relationshipWithLocalGuardian: z.string().optional(),
@@ -71,7 +89,9 @@ const studentValidationSchema = z.object({
     roomNumber: z.string().optional(),
 
     transferCertificate: z.string().optional(),
-    birthCertificate: z.string({ required_error: 'Birth certificate is required' }),
+    birthCertificate: z.string({
+      required_error: 'Birth certificate is required',
+    }),
   }),
 });
 

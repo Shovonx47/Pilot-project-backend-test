@@ -18,7 +18,7 @@ const createOffDaySetupIntoDB = async (payload: TOffDaySetup) => {
     if (existingOffDaySetup) {
       throw new AppError(
         StatusCodes.CONFLICT,
-        `An off-day setup already exists for ${offDay.startDate} on ${offDay.startDay} with the title "${offDay.title}". Please choose a different day or date.`
+        `An off-day setup already exists for ${offDay.startDate} on ${offDay.startDay} with the title "${offDay.title}". Please choose a different day or date.`,
       );
     }
   }
@@ -69,7 +69,7 @@ const updateOffDaySetupInDB = async (id: string, payload: TOffDaySetup) => {
     if (existingOffDaySetup) {
       throw new AppError(
         StatusCodes.CONFLICT,
-        `An off-day setup already exists for ${offDay.startDate} on ${offDay.startDay} with the title "${offDay.title}". Please choose a different day or date.`
+        `An off-day setup already exists for ${offDay.startDate} on ${offDay.startDay} with the title "${offDay.title}". Please choose a different day or date.`,
       );
     }
   }

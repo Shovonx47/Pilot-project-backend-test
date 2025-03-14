@@ -1,10 +1,13 @@
 import mongoose, { Model, Schema } from 'mongoose';
 import { TStaff } from './staff.interface';
 
-
 const StaffSchema = new Schema<TStaff>(
   {
-    auth: { type: Schema.Types.ObjectId, ref: 'Auth', required: [true, 'Auth reference is required.'] },
+    auth: {
+      type: Schema.Types.ObjectId,
+      ref: 'Auth',
+      required: [true, 'Auth reference is required.'],
+    },
     attendance: [
       {
         type: Schema.Types.ObjectId,
@@ -13,52 +16,116 @@ const StaffSchema = new Schema<TStaff>(
     ],
     userId: { type: String, required: [true, 'User ID is required.'] },
     staffId: { type: String, required: [true, 'Staff ID is required.'] },
-    profileImage: { type: String, required: [true, 'Profile image is required.'] },
+    profileImage: {
+      type: String,
+      required: [true, 'Profile image is required.'],
+    },
     firstName: { type: String, required: [true, 'First name is required.'] },
     lastName: { type: String, required: [true, 'Last name is required.'] },
     category: { type: String, required: [true, 'Category is required.'] },
-    joiningDate: { type: String, required: [true, 'Joining date is required.'] },
+    joiningDate: {
+      type: String,
+      required: [true, 'Joining date is required.'],
+    },
 
     gender: { type: String, required: [true, 'Gender is required.'] },
-    dateOfBirth: { type: String, required: [true, 'Date of birth is required.'] },
+    dateOfBirth: {
+      type: String,
+      required: [true, 'Date of birth is required.'],
+    },
     bloodGroup: { type: String, required: [true, 'Blood group is required.'] },
-    maritalStatus: { type: String, required: [true, 'Marital status is required.'] },
+    maritalStatus: {
+      type: String,
+      required: [true, 'Marital status is required.'],
+    },
     religion: { type: String, required: [true, 'Religion is required.'] },
-    contactNumber: { type: String, required: [true, 'Contact number is required.'] },
+    contactNumber: {
+      type: String,
+      required: [true, 'Contact number is required.'],
+    },
     alternativeContactNumber: { type: String },
     email: { type: String, required: [true, 'Email is required.'] },
     nidNumber: { type: String, required: [true, 'NID number is required.'] },
-    educationalQualification: { type: String, required: [true, 'Educational qualification is required.'] },
-    motherTongue: { type: String, required: [true, 'Mother tongue is required.'] },
-    status: { type: String, required: [true, 'Status is required'], enum: ["Active", "Inactive"] },
+    educationalQualification: {
+      type: String,
+      required: [true, 'Educational qualification is required.'],
+    },
+    motherTongue: {
+      type: String,
+      required: [true, 'Mother tongue is required.'],
+    },
+    status: {
+      type: String,
+      required: [true, 'Status is required'],
+      enum: ['Active', 'Inactive'],
+    },
 
     // Payroll info
     EPFNo: { type: String },
-    basicSalary: { type: String, required: [true, 'Basic salary is required.'] },
-    workLocation: { type: String, required: [true, 'Work location is required.'] },
-    contractType: { type: String, required: [true, 'Contract type is required.'] },
+    basicSalary: {
+      type: String,
+      required: [true, 'Basic salary is required.'],
+    },
+    workLocation: {
+      type: String,
+      required: [true, 'Work location is required.'],
+    },
+    contractType: {
+      type: String,
+      required: [true, 'Contract type is required.'],
+    },
     workShift: { type: String, required: [true, 'Work shift is required.'] },
 
     // Parents info
     fatherName: { type: String, required: [true, 'Father name is required.'] },
     fatherEmail: { type: String },
-    fatherContactNumber: { type: String, required: [true, 'Father contact number is required.'] },
-    fatherOccupation: { type: String, required: [true, 'Father occupation is required.'] },
-    fatherNidNumber: { type: String, required: [true, 'Father NID number is required.'] },
+    fatherContactNumber: {
+      type: String,
+      required: [true, 'Father contact number is required.'],
+    },
+    fatherOccupation: {
+      type: String,
+      required: [true, 'Father occupation is required.'],
+    },
+    fatherNidNumber: {
+      type: String,
+      required: [true, 'Father NID number is required.'],
+    },
 
     motherName: { type: String, required: [true, 'Mother name is required.'] },
     motherEmail: { type: String },
-    motherContactNumber: { type: String, required: [true, 'Mother contact number is required.'] },
-    motherOccupation: { type: String, required: [true, 'Mother occupation is required.'] },
-    motherNidNumber: { type: String, required: [true, 'Mother NID number is required.'] },
+    motherContactNumber: {
+      type: String,
+      required: [true, 'Mother contact number is required.'],
+    },
+    motherOccupation: {
+      type: String,
+      required: [true, 'Mother occupation is required.'],
+    },
+    motherNidNumber: {
+      type: String,
+      required: [true, 'Mother NID number is required.'],
+    },
 
     // Address
-    presentAddress: { type: String, required: [true, 'Present address is required.'] },
-    permanentAddress: { type: String, required: [true, 'Permanent address is required.'] },
+    presentAddress: {
+      type: String,
+      required: [true, 'Present address is required.'],
+    },
+    permanentAddress: {
+      type: String,
+      required: [true, 'Permanent address is required.'],
+    },
 
     // Bank account details
-    accountName: { type: String, required: [true, 'Account name is required.'] },
-    accountNumber: { type: String, required: [true, 'Account number is required.'] },
+    accountName: {
+      type: String,
+      required: [true, 'Account name is required.'],
+    },
+    accountNumber: {
+      type: String,
+      required: [true, 'Account number is required.'],
+    },
     bankName: { type: String, required: [true, 'Bank name is required.'] },
     IFSCCode: { type: String, required: [true, 'IFSC code is required.'] },
     branchName: { type: String, required: [true, 'Branch name is required.'] },
@@ -81,14 +148,17 @@ const StaffSchema = new Schema<TStaff>(
 
     // Documents
     resume: { type: String, required: [true, 'Resume is required.'] },
-    joiningLetter: { type: String, required: [true, 'Joining letter is required.'] },
+    joiningLetter: {
+      type: String,
+      required: [true, 'Joining letter is required.'],
+    },
 
     // Soft delete
-    isDeleted: { type: Boolean, default: false }
+    isDeleted: { type: Boolean, default: false },
   },
   {
     timestamps: true,
-  }
+  },
 );
 
 StaffSchema.pre('find', function (next) {
@@ -102,8 +172,13 @@ StaffSchema.pre('findOne', function (next) {
 });
 
 StaffSchema.pre('aggregate', function (next) {
-  this.pipeline().unshift({ $match: { isDeleted: { $ne: true }, status: 'Active' } });
+  this.pipeline().unshift({
+    $match: { isDeleted: { $ne: true }, status: 'Active' },
+  });
   next();
 });
 
-export const Staff: Model<TStaff> = mongoose.model<TStaff>('Staff', StaffSchema);
+export const Staff: Model<TStaff> = mongoose.model<TStaff>(
+  'Staff',
+  StaffSchema,
+);

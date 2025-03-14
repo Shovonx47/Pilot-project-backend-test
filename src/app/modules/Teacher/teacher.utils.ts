@@ -8,7 +8,9 @@ const findLastTeacherIdForYear = async (year: string) => {
     .select('teacherId')
     .lean();
 
-  return lastTeacher?.teacherId ? lastTeacher.teacherId.substring(4) : undefined;
+  return lastTeacher?.teacherId
+    ? lastTeacher.teacherId.substring(4)
+    : undefined;
 };
 
 export const generateTeacherId = async (joiningDate: string) => {

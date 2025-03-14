@@ -2,16 +2,14 @@ import { StatusCodes } from 'http-status-codes';
 import AppError from '../../errors/AppError';
 import QueryBuilder from '../../builder/QueryBuilder';
 import sanitizePayload from '../../middlewares/updateDataValidation';
-import { TMigrationClass, TStudent } from './student.interface';
+import { TStudent } from './student.interface';
 import { Student } from './student.model';
 import { Auth } from '../Auth/auth.model';
 import mongoose, { Types } from 'mongoose';
-import { generateStudentId } from './student.utils';
+import { generateStudentId, generateStudentRoll } from './student.utils';
 import bcrypt from 'bcrypt';
 import config from '../../config';
 import { studentSearchableFields } from './student.const';
-
-
 
 const createStudentIntoDB = async (payload: TStudent) => {
   const session = await mongoose.startSession();
@@ -24,16 +22,15 @@ const createStudentIntoDB = async (payload: TStudent) => {
         $and: [
           { class: payload.class },
           { section: payload.section },
-          { userId: payload.userId }
+          { userId: payload.userId },
         ],
         $or: [
-          { email: payload.email } // This checks email independently
-        ]
+          { email: payload.email }, // This checks email independently
+        ],
       },
       null,
-      { session }
+      { session },
     );
-
 
     if (existingStudent) {
       throw new AppError(
@@ -42,10 +39,10 @@ const createStudentIntoDB = async (payload: TStudent) => {
       );
     }
 
-
     // Check if the user is registered in Auth
-    const checkUserAuth = await Auth.findOne({ userId: payload.userId }).session(session);
-
+    const checkUserAuth = await Auth.findOne({
+      userId: payload.userId,
+    }).session(session);
 
     if (!checkUserAuth) {
       throw new AppError(StatusCodes.UNAUTHORIZED, 'You are not registered.');
@@ -53,18 +50,22 @@ const createStudentIntoDB = async (payload: TStudent) => {
 
     // Generate a student ID
     const studentId = await generateStudentId(payload.admissionDate);
+    const studentRoll = await generateStudentRoll(
+      payload.admissionDate,
+      payload.class,
+    );
 
     // 🔹 Prepare update data for Auth
     const updateAuthData: Record<string, any> = {
       isCompleted: true,
-      role: "student",
-      userId: ''
+      role: 'student',
+      userId: '',
     };
 
     if (!checkUserAuth.password) {
       updateAuthData.password = await bcrypt.hash(
         studentId,
-        Number(config.bcrypt_salt_rounds)
+        Number(config.bcrypt_salt_rounds),
       );
     }
 
@@ -72,11 +73,16 @@ const createStudentIntoDB = async (payload: TStudent) => {
     await Auth.findOneAndUpdate(
       { userId: payload.userId },
       { $set: updateAuthData },
-      { session, new: true }
+      { session, new: true },
     );
 
     // Create the student record, including the generated studentId
-    const studentData = { ...payload, studentId, auth: checkUserAuth._id };
+    const studentData = {
+      ...payload,
+      studentId,
+      roll: studentRoll,
+      auth: checkUserAuth._id,
+    };
     const student = await Student.create([studentData], { session });
 
     // Commit the transaction
@@ -92,7 +98,6 @@ const createStudentIntoDB = async (payload: TStudent) => {
   }
 };
 
-
 const getAllStudentFromDB = async (query: Record<string, unknown>) => {
   const studentQuery = new QueryBuilder(Student.find(), query)
     .sort()
@@ -102,6 +107,7 @@ const getAllStudentFromDB = async (query: Record<string, unknown>) => {
 
   const meta = await studentQuery.countTotal();
   const data = await studentQuery.modelQuery;
+  
 
   return {
     meta,
@@ -109,30 +115,17 @@ const getAllStudentFromDB = async (query: Record<string, unknown>) => {
   };
 };
 
-// const getSingleStudentDetails = async (id: string) => {
-//   const singleStudent = await Student.findById(id);
-
-//   if (!singleStudent) {
-//     throw new AppError(StatusCodes.NOT_FOUND, 'No student found');
-//   }
-
-//   return singleStudent;
-// };
-
 const getSingleStudentDetails = async (identifier: string) => {
   // Check if the identifier is a valid ObjectId, and search by _id
   let query = {};
   if (Types.ObjectId.isValid(identifier)) {
     query = { _id: identifier };
   } else {
-    query = { email: identifier };  // If it's not a valid ObjectId, search by email
+    query = { email: identifier }; // If it's not a valid ObjectId, search by email
   }
 
   // Find student by either _id or email
   const singleStudent = await Student.findOne(query);
-
-  console.log(identifier);
-  console.log(singleStudent);
 
   if (!singleStudent) {
     throw new AppError(StatusCodes.NOT_FOUND, 'No student found');
@@ -141,16 +134,18 @@ const getSingleStudentDetails = async (identifier: string) => {
   return singleStudent;
 };
 
-
-
 const updateStudentInDB = async (id: string, payload: TStudent) => {
-
   const existingStudent = await Student.findOne(
     {
-      $and: [{ class: payload.class }, { section: payload.section }, { userId: payload.userId }], $or: [
-        { email: payload.email } // This checks email independently
+      $and: [
+        { class: payload.class },
+        { section: payload.section },
+        { userId: payload.userId },
       ],
-      _id: { $ne: id }
+      $or: [
+        { email: payload.email }, // This checks email independently
+      ],
+      _id: { $ne: id },
     },
     null,
   );
@@ -176,25 +171,28 @@ const updateStudentInDB = async (id: string, payload: TStudent) => {
   return updatedStudent;
 };
 
-const migrateClassIntoDB = async (id: string, payload: TMigrationClass) => {
+const migrateClassIntoDB = async (id: string, payload: TStudent) => {
   const existingStudent = await Student.findOne({
-    $and: [
-      { class: payload.previousClass },
-      { roll: payload.previousClassRoll },
-    ],
-    _id: { $eq: id },
+    _id: id,
   });
 
   if (!existingStudent) {
-    throw new AppError(
-      StatusCodes.CONFLICT,
-      `No students were found in class ${payload.previousClass}.`,
-    );
+    throw new AppError(StatusCodes.CONFLICT, `No student found with ID ${id}.`);
   }
 
-  const sanitizeData = sanitizePayload(payload);
+  // Add previous roll and class to history
+  const updatedData = {
+    $push: {
+      previousClassRoll: existingStudent.roll, // Push current roll to history
+      previousClass: existingStudent.class, // Push current class to history
+    },
+    $set: {
+      roll: payload.roll, // Update roll to new roll
+      class: payload.class, // Update class to new class
+    },
+  };
 
-  const migrateStudent = await Student.findByIdAndUpdate(id, sanitizeData, {
+  const migrateStudent = await Student.findByIdAndUpdate(id, updatedData, {
     new: true,
     runValidators: true,
   });

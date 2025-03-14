@@ -10,20 +10,19 @@ export type TUser = {
   password: string;
   passwordChangedAt?: Date;
   role:
-  | 'user'
-  | 'teacher'
-  | 'student'
-  | 'staff'
-  | 'accountant'
-  | 'admin'
-  | 'super_admin';
+    | 'user'
+    | 'teacher'
+    | 'student'
+    | 'staff'
+    | 'accountant'
+    | 'admin'
+    | 'super_admin';
   status: 'active' | 'block';
   isDeleted: boolean;
   isCompleted: boolean;
 
   otp: string;
   otpExpireDate: Date;
-
 };
 export type TUserForLogin = {
   auth: string;
@@ -35,7 +34,6 @@ export type TUserExtends = Document &
     comparePassword(candidatePassword: string): Promise<boolean>;
   };
 
-
 export interface UserModel extends Model<TUserExtends> {
   isUserExistsByCustomId(email: string): Promise<TUser | null>;
   isJWTIssuedBeforePasswordChanged(
@@ -44,13 +42,10 @@ export interface UserModel extends Model<TUserExtends> {
   ): boolean;
 }
 
-
-
-export type Action = 'send-verify-code'
+export type Action =
+  | 'send-verify-code'
   | 'verify-otp'
-  | 'update-forgot-password'
-
-
+  | 'update-forgot-password';
 
 export type TUserRole = keyof typeof USER_ROLE;
 

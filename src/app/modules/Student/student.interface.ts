@@ -1,6 +1,5 @@
 import { Types } from 'mongoose';
 
-
 export interface TSibling {
   siblingName: string;
   class: string;
@@ -9,7 +8,6 @@ export interface TSibling {
   roll: string;
   motherTongue: string;
 }
-
 
 // Interface for Student
 export interface TStudent {
@@ -21,11 +19,14 @@ export interface TStudent {
   profileImage: string;
   academicYear: string;
   admissionDate: string;
-  status: "Active" | "Inactive";
+  status: 'Active' | 'Inactive';
   category: string;
   firstName: string;
   lastName: string;
+  previousClass?: string[];
   class: string;
+  roll: string;
+  previousClassRoll?: string[];
   section: string;
   gender: string;
   dateOfBirth: string;
@@ -36,16 +37,14 @@ export interface TStudent {
   board: string;
   motherTongue: string;
 
-
   presentAddress: string;
   permanentAddress: string;
-
 
   previousSchoolName: string;
   previousClassName: string;
   previousSchoolAddress: string;
   previousClassGpa: string;
-  siblings: TSibling[]
+  siblings: TSibling[];
 
   //  guardian details
 
@@ -55,13 +54,11 @@ export interface TStudent {
   fatherOccupation: string;
   fatherNidNumber: string;
 
-
   motherName: string;
   motherEmail: string;
   motherContactNumber: string;
   motherOccupation: string;
   motherNidNumber: string;
-
 
   localGuardianName: string;
   relationshipWithLocalGuardian: string;
@@ -69,8 +66,6 @@ export interface TStudent {
   localGuardianContactNumber: string;
   localGuardianOccupation: string;
   localGuardianNidNumber: string;
-
-
 
   // Transport Information
 
@@ -87,14 +82,12 @@ export interface TStudent {
   transferCertificate: string;
   birthCertificate: string;
 
-
-
   isDeleted: boolean;
 }
 
-export interface TMigrationClass {
-  previousClassRoll: string;
-  previousClass: string;
-  roll?: string;
-  class: string;
-}
+// export interface TMigrationClass {
+//   previousClassRoll: string;
+//   previousClass: string;
+//   roll?: string;
+//   class: string;
+// }

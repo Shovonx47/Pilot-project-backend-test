@@ -13,8 +13,8 @@ app.use(
   cors({
     origin: ['http://localhost:3000', 'http://localhost:3001'],
     credentials: true,
-    allowedHeaders: ["Content-Type", "Authorization"],
-    methods: ["GET", "POST", "PUT", "PATCH", "DELETE"],
+    allowedHeaders: ['Content-Type', 'Authorization'],
+    methods: ['GET', 'POST', 'PUT', 'PATCH', 'DELETE'],
   }),
 );
 app.use('/api/v1', router);

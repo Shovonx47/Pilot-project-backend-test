@@ -66,7 +66,6 @@ const createAccountOfficerIntoDB = async (payload: TAccountOfficer) => {
       );
     }
     if (checkUserAuth.password && checkUserAuth.userId) {
-       
       await Auth.findOneAndUpdate(
         { userId: payload.userId }, // Query filter
         {

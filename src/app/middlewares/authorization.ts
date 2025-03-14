@@ -17,7 +17,7 @@ const authorization = (...requiredRoles: TUserRole[]) => {
       throw new AppError(StatusCodes.UNAUTHORIZED, 'You are not authorized!');
     }
     // checking if the given token is valid
-    let decoded
+    let decoded;
 
     try {
       decoded = jwt.verify(
@@ -61,10 +61,7 @@ const authorization = (...requiredRoles: TUserRole[]) => {
     }
 
     if (requiredRoles && !requiredRoles.includes(role)) {
-      throw new AppError(
-        StatusCodes.UNAUTHORIZED,
-        'You are not authorized!',
-      );
+      throw new AppError(StatusCodes.UNAUTHORIZED, 'You are not authorized!');
     }
 
     req.user = decoded as JwtPayload;
