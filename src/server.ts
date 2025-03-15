@@ -9,8 +9,9 @@ async function main() {
   try {
     await mongoose.connect(config.database_url as string);
 
-    server = app.listen(config.port, () => {
-      console.log(`Miracle pilot project is listening on port ${config.port}`);
+    const port = process.env.PORT || config.port || 3000;
+    server = app.listen(port, () => {
+      console.log(`Miracle pilot project is listening on port ${port}`);
     });
   } catch (err) {
     console.log(err);
@@ -19,8 +20,8 @@ async function main() {
 
 main();
 
-process.on('unhandledRejection', () => {
-  console.log(`😈 unhandledRejection is detected , shutting down ...`);
+process.on('unhandledRejection', (err) => {
+  console.log(`😈 unhandledRejection is detected:`, err);
   if (server) {
     server.close(() => {
       process.exit(1);
@@ -29,7 +30,10 @@ process.on('unhandledRejection', () => {
   process.exit(1);
 });
 
-process.on('uncaughtException', () => {
-  console.log(`😈 uncaughtException is detected , shutting down ...`);
+process.on('uncaughtException', (err) => {
+  console.log(`😈 uncaughtException is detected:`, err);
   process.exit(1);
 });
+
+// For Vercel serverless functions
+export default app;
