@@ -9,19 +9,22 @@ const app: Application = express();
 
 app.use(express.json());
 app.use(cookieParser());
+
+// Updated CORS configuration
 app.use(
   cors({
     origin: [
       'http://localhost:3000',
       'http://localhost:3001',
-      'https://pilot-project-backend-test.vercel.app',
-      process.env.VERCEL_URL ? `https://${process.env.VERCEL_URL}` : '',
+      'https://miracle-pilot-project-frontend.vercel.app',
+      process.env.FRONTEND_URL,
     ].filter(Boolean),
     credentials: true,
-    allowedHeaders: ['Content-Type', 'Authorization'],
     methods: ['GET', 'POST', 'PUT', 'PATCH', 'DELETE'],
+    allowedHeaders: ['Content-Type', 'Authorization'],
   }),
 );
+
 app.use('/api/v1', router);
 
 app.get('/', (req: Request, res: Response) => {
